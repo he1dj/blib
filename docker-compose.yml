@@ -1,3 +1,7 @@
+networks:
+  default_network:
+    driver: bridge
+
 volumes:
   blib_local_postgres_data: {}
   blib_local_postgres_data_backups: {}
@@ -20,35 +24,43 @@ services:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
     ports:
-      - '8000:8000'
+      - 8000:8000
     command: /start
+    networks:
+      - default_network
 
   postgres:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: blib_production_postgres
+    image: blib_local_postgres
     container_name: blib_local_postgres
     volumes:
       - blib_local_postgres_data:/var/lib/postgresql/data
       - blib_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+    ports:
+      - 5432:5432
+    networks:
+      - default_network
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
     container_name: blib_local_mailpit
     ports:
       - "8025:8025"
+    networks:
+      - default_network
 
   redis:
     image: docker.io/redis:6
     container_name: blib_local_redis
-    
     volumes:
       - blib_local_redis_data:/data
+    networks:
+      - default_network
     
-
   celeryworker:
     <<: *django
     image: blib_local_celeryworker
@@ -59,6 +71,8 @@ services:
       - mailpit
     ports: []
     command: /start-celeryworker
+    networks:
+      - default_network
 
   celerybeat:
     <<: *django
@@ -70,14 +84,18 @@ services:
       - mailpit
     ports: []
     command: /start-celerybeat
+    networks:
+      - default_network
 
   flower:
     <<: *django
     image: blib_local_flower
     container_name: blib_local_flower
     ports:
-      - '5555:5555'
+      - 5555:5555
     command: /start-flower
+    networks:
+      - default_network
 
   node:
     build:
@@ -93,4 +111,6 @@ services:
       - /app/node_modules
     command: npm run dev
     ports:
-      - '3000:3000'
+      - 3000:3000
+    networks:
+      - default_network
