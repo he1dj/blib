@@ -1,8 +1,9 @@
 from django.urls import path
-from django.views.generic import TemplateView
+
+from blib.books.views import book_list
 
 app_name = "books"
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="books/pages/home.html"), name="books_home"),
+    path("", book_list, name="books_home"),
 ]

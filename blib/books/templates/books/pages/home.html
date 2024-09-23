@@ -5,5 +5,10 @@
     <h1>
         Books Home Page!
     </h1>
+    <div class="book_list">
+        {% include 'books/book_list.html' %}
+        {% block book_list %}
+        {% endblock book_list %}
+    </div>
 </div>
 {% endblock content %}

@@ -7,3 +7,6 @@ POSTGRES_USER=debug
 POSTGRES_PASSWORD=debug
 
 DATABASE_URL='postgresql://debug:debug@postgres:5432/blib'
+
+PGADMIN_DEFAULT_EMAIL="admin@admin.com"
+PGADMIN_DEFAULT_PASSWORD="admin"

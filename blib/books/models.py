@@ -1,5 +1,7 @@
 import io
 
+import PyPDF2
+import PyPDF2.errors
 import qrcode
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -10,6 +12,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.admin.panels import InlinePanel
 from wagtail.models import ClusterableModel
 from wagtail.models import ParentalKey
+from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 
 
@@ -36,12 +39,14 @@ class Tag(models.Model):
 
 
 @register_snippet
-class Book(ClusterableModel):
+class Book(ClusterableModel, index.Indexed):
     id = models.AutoField(primary_key=True)
     uuid = ShortUUIDField(unique=True, length=8, max_length=10)
     title = models.CharField(max_length=255, blank=False)
     slug = models.SlugField(unique=True, max_length=55, blank=False)
     author = models.CharField(max_length=255)
+    published_date = models.DateField(blank=False)
+    number_of_pages = models.IntegerField(blank=False, default=0)
     description = models.TextField(max_length=1024, blank=True)
     pdf = models.FileField(upload_to="books/pdfs/")
     cover_image = models.ImageField(upload_to="books/covers/", blank=True)
@@ -50,12 +55,13 @@ class Book(ClusterableModel):
     upload_date = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now=True)
     size = models.CharField(max_length=50, blank=True)
-
     panels = [
         FieldPanel("uuid", read_only=True),
         FieldPanel("title"),
         FieldPanel("slug"),
         FieldPanel("author"),
+        FieldPanel("published_date"),
+        FieldPanel("number_of_pages"),
         FieldPanel("description"),
         InlinePanel("book_category_relationship", label="Categories"),
         InlinePanel("book_tag_relationship", label="Tags"),
@@ -66,6 +72,25 @@ class Book(ClusterableModel):
         FieldPanel("upload_date", read_only=True),
         FieldPanel("last_edited", read_only=True),
         FieldPanel("size"),
+    ]
+    search_fields = [
+        index.SearchField("title"),
+        index.SearchField("author"),
+        index.SearchField("description"),
+        index.FilterField("published_date"),
+        index.FilterField("number_of_pages"),
+        index.RelatedFields(
+            "book_category_relationship",
+            [
+                index.SearchField("category__title"),
+            ],
+        ),
+        index.RelatedFields(
+            "book_tag_relationship",
+            [
+                index.SearchField("tag__title"),
+            ],
+        ),
     ]
 
     class Meta:
@@ -78,6 +103,7 @@ class Book(ClusterableModel):
         if not self.slug:
             self.slug = self.generate_slug()
         self.public_url = self.generate_public_url()
+        self.number_of_pages = 0
         self.qr_code = self.generate_qr_code(self.public_url)
         super().save(*args, **kwargs)
 
@@ -110,19 +136,35 @@ class Book(ClusterableModel):
         return [n.tag for n in self.book_tag_relationship.all()]
 
 
-class BookCategoryRelationship(models.Model):
+class BookCategoryRelationship(models.Model, index.Indexed):
     Book = ParentalKey("Book", related_name="book_category_relationship")
     category = models.ForeignKey("Category", on_delete=models.CASCADE, related_name="+")
     panels = [FieldPanel("category")]
+    index.RelatedFields(
+        "book",
+        [
+            index.SearchField("title"),
+            index.FilterField("published_date"),
+            index.FilterField("number_of_pages"),
+        ],
+    )
 
     def __str__(self) -> str:
         return super().__str__()
 
 
-class BookTagRelationship(models.Model):
+class BookTagRelationship(models.Model, index.Indexed):
     Book = ParentalKey("Book", related_name="book_tag_relationship")
     tag = models.ForeignKey("Tag", on_delete=models.CASCADE, related_name="+")
     panels = [FieldPanel("tag")]
+    index.RelatedFields(
+        "book",
+        [
+            index.SearchField("title"),
+            index.FilterField("published_date"),
+            index.FilterField("number_of_pages"),
+        ],
+    )
 
     def __str__(self) -> str:
         return super().__str__()
