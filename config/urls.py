@@ -13,12 +13,6 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-# from dj_routify import Router
-# from dj_routify import include_router
-
-# books_router = Router("/books", "books", auto_trailing_slash=False)
-
-
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
@@ -32,7 +26,6 @@ urlpatterns = [
     path("user/", include("blib.users.urls", namespace="users")),
     path("account/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    # include_router(books_router),
     path("books", include("blib.books.urls", namespace="books")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
