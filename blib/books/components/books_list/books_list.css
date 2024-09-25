@@ -1,0 +1,87 @@
+.book-list {
+    list-style-type: none;
+    padding: 0;
+    background-color: red;
+}
+
+.book-item {
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.book-cover {
+    width: 150px;
+    height: auto;
+    margin-right: 20px;
+    border-radius: 8px;
+}
+
+.book-details {
+    flex: 1;
+}
+
+.book-details h3 {
+    margin-top: 0;
+}
+
+.book-details p {
+    margin: 5px 0;
+}
+
+.book-tags, .book-categories {
+    margin-top: 10px;
+}
+
+.tag, .category {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.download-btn, .read-more, .public-url {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    text-decoration: none;
+    background-color: #2ecc71;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.download-btn:hover, .read-more:hover, .public-url:hover {
+    background-color: #27ae60;
+}
+
+/* Pagination Styles */
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #2980b9;
+}
+
+.pagination span {
+    margin: 0 10px;
+}

@@ -1,6 +1,3 @@
-# ruff: noqa: ERA001, E501
-"""Base settings to build other settings files upon."""
-
 from pathlib import Path
 
 import environ
@@ -84,6 +81,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "webpack_loader",
     "django_htmx",
+    "django_components",
 ]
 
 WAGTAIL_APPS = [
@@ -157,6 +155,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "config.middleware.TrailingSlashMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -175,12 +174,25 @@ STATIC_ROOT = str(BASE_DIR / "staticfiles")
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = [str(APPS_DIR / "static")]
+STATICFILES_DIRS = [
+    str(APPS_DIR / "static"),
+]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "django_components.finders.ComponentsFileSystemFinder",
 ]
+
+# Django components
+COMPONENTS = {
+    "dirs": [
+        BASE_DIR / "components",
+    ],
+    "app_dirs": [
+        "components",
+    ],
+}
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -199,7 +211,6 @@ TEMPLATES = [
         # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
         "DIRS": [str(APPS_DIR / "templates")],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
-        "APP_DIRS": True,
         "OPTIONS": {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
             "context_processors": [
@@ -212,6 +223,19 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "blib.users.context_processors.allauth_settings",
+            ],
+            "loaders": [
+                (
+                    "django.template.loaders.cached.Loader",
+                    [
+                        "django.template.loaders.filesystem.Loader",
+                        "django.template.loaders.app_directories.Loader",
+                        "django_components.template_loader.Loader",
+                    ],
+                ),
+            ],
+            "builtins": [
+                "django_components.templatetags.component_tags",
             ],
             "debug": DEBUG,
         },
@@ -379,4 +403,10 @@ WEBPACK_LOADER = {
 WAGTAIL_SITE_NAME = "Blib CMS"
 WAGTAILADMIN_BASE_URL = "http://localhost:8000/cms"
 WAGTAILDOCS_EXTENSIONS = ["pdf", "png", "md", "jpg", "jpeg", "webp", "svg"]
+# WAGTAILSEARCH_BACKENDS = {
+#     "default": {
+#         "BACKEND": "wagtail.search.backends.database",
+#     },
+# }
+
 SITE_URL = env("SITE_URL")

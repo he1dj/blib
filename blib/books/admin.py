@@ -7,7 +7,7 @@ from .models import Tag
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ("title", "author", "upload_date", "last_edited", "size")
+    list_display = ("title", "author", "upload_date", "last_edited", "file_size")
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ("title", "author")
     list_filter = ("upload_date", "last_edited")
@@ -16,7 +16,7 @@ class BookAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             "fields": (
-                "title", "slug", "author", "description", "pdf", "cover_image", "size",
+                "title", "slug", "author", "description", "pdf", "cover_image", "file_size",
             ),
         }),
         ("Links & QR", {
