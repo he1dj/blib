@@ -28,8 +28,8 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("user", include("blib.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
+    path("user/", include("blib.users.urls", namespace="users")),
+    path("account/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     include_router(books_router),
     # Media files

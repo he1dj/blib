@@ -6,7 +6,7 @@ from django_routify import Router
 
 from .models import Book
 
-books_router = Router("books", "books", auto_trailing_slash=False)
+books_router = Router("/books", "books", auto_trailing_slash=False)
 
 
 @books_router.route("", name="books_list")
@@ -42,7 +42,7 @@ def book_list(request):
     return render(request, "books/pages/home.html", context)
 
 
-@books_router.route("/<str:uuid>", name="book_view")
+@books_router.route("/<str:uuid>")
 @books_router.route("/<str:uuid>/<slug:slug>", name="book_view")
 def book_view(request, uuid, slug=None):
     try:
