@@ -14,21 +14,24 @@ from rest_framework.authtoken.views import obtain_auth_token
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from django_routify import include_router
+from blib.books.views import books_router
+
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
-        "about/",
+        "about",
         TemplateView.as_view(template_name="pages/about.html"),
         name="about",
     ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("users/", include("blib.users.urls", namespace="users")),
+    path("user", include("blib.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path("books/", include("blib.books.urls", namespace="books")),
+    include_router(books_router),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
@@ -41,10 +44,10 @@ urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
     # DRF auth token
-    path("api/auth-token/", obtain_auth_token),
-    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path("api/auth-token", obtain_auth_token),
+    path("api/schema", SpectacularAPIView.as_view(), name="api-schema"),
     path(
-        "api/docs/",
+        "api/docs",
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
@@ -62,21 +65,21 @@ if settings.DEBUG:
     # these url in browser to see how these error pages look like.
     urlpatterns += [
         path(
-            "400/",
+            "400",
             default_views.bad_request,
             kwargs={"exception": Exception("Bad Request!")},
         ),
         path(
-            "403/",
+            "403",
             default_views.permission_denied,
             kwargs={"exception": Exception("Permission Denied")},
         ),
         path(
-            "404/",
+            "404",
             default_views.page_not_found,
             kwargs={"exception": Exception("Page not Found")},
         ),
-        path("500/", default_views.server_error),
+        path("500", default_views.server_error),
     ]
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar  # type: ignore

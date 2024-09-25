@@ -1,7 +1,6 @@
 import io
 
-import PyPDF2
-import PyPDF2.errors
+# import PyPDF2
 import qrcode
 from django.conf import settings
 from django.core.files.base import ContentFile
