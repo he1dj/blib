@@ -1,3 +1,12 @@
-from django_routify import Router
+from django.urls import path
 
-books_router = Router("books", "books", auto_trailing_slash=False)
+from blib.books.views import book_details
+from blib.books.views import books_list
+
+app_name = "books"
+
+urlpatterns = [
+    path("", books_list, name="books_list"),
+    path("/<str:uuid>/<slug:slug>", book_details, name="book_details"),
+    path("/<str:uuid>", book_details),
+]

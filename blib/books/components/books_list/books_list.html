@@ -1,54 +1,55 @@
-{% extends 'base.html' %}
-
-{% block content %}
 <ul class="book-list">
-    {% for book in books %}
-    <li class="book-item">
-        <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover" class="book-cover">
-        <div class="book-details">
-            <h3>{{ book.title }}</h3>
-            <p><strong>Author:</strong> {{ book.author }}</p>
-            <p><strong>Published on:</strong> {{ book.published_date }}</p>
-            <p><strong>Pages:</strong> {{ book.number_of_pages }}</p>
-            <p><strong>File Size:</strong> {{ book.file_size }}</p>
-            <p>{{ book.description|truncatewords:20 }}</p>
-            <a href="{{ book.pdf.url }}" class="download-btn">Download PDF</a>
-            <a href="{{ book.public_url }}" class="public-url">View Public Link</a>
-            <a href="{% url 'books:book_view' uuid=book.uuid slug=book.slug %}" class="read-more">Read More</a>
-            <div class="book-tags">
-                <strong>Tags:</strong>
-                {% for tag in book.tags %}
-                <span class="tag">{{ tag }}</span>
-                {% empty %}
-                <span>No tags available</span>
-                {% endfor %}
-            </div>
-            <div class="book-categories">
-                <strong>Categories:</strong>
-                {% for category in book.categories %}
-                <span class="category">{{ category }}</span>
-                {% empty %}
-                <span>No categories available</span>
-                {% endfor %}
-            </div>
-        </div>
-    </li>
-    {% empty %}
-    <p>No books available.</p>
-    {% endfor %}
+  {% for book in books %}
+  <li class="book-item">
+    <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover" class="book-cover" />
+    <div class="book-details">
+      <h3>{{ book.title }}</h3>
+      <p>
+        <strong>Author:</strong> {{ book.author }}
+      </p>
+      <p>
+        <strong>Published on:</strong> {{ book.published_date }}
+      </p>
+      <p>
+        <strong>Pages:</strong> {{ book.number_of_pages }}
+      </p>
+      <p>
+        <strong>File Size:</strong> {{ book.file_size }}
+      </p>
+      <p>{{ book.description|truncatewords:20 }}</p>
+      <a href="{{ book.pdf.url }}" class="download-btn">Download PDF</a>
+      <a href="{{ book.public_url }}" class="public-url">View Public Link</a>
+      <a href="{% url 'books:book_details' uuid=book.uuid slug=book.slug %}" class="read-more">Read More</a>
+      <div class="book-tags">
+        <strong>Tags:</strong>
+        {% for tag in book.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% empty %}
+        <span>No tags available</span>
+        {% endfor %}
+      </div>
+      <div class="book-categories">
+        <strong>Categories:</strong>
+        {% for category in book.categories %}
+        <span class="category">{{ category }}</span>
+        {% empty %}
+        <span>No categories available</span>
+        {% endfor %}
+      </div>
+    </div>
+  </li>
+  {% empty %}
+  <p>No books available.</p>
+  {% endfor %}
 </ul>
-
 <div class="pagination">
-    {% if books.has_previous %}
-    <a href="?page=1">First</a>
-    <a href="?page={{ books.previous_page_number }}">Previous</a>
-    {% endif %}
-
-    <span>Page {{ books.number }} of {{ books.paginator.num_pages }}</span>
-
-    {% if books.has_next %}
-    <a href="?page={{ books.next_page_number }}">Next</a>
-    <a href="?page={{ books.paginator.num_pages }}">Last</a>
-    {% endif %}
+  {% if books.has_previous %}
+  <a href="?page=1">First</a>
+  <a href="?page={{ books.previous_page_number }}">Previous</a>
+  {% endif %}
+  <span>Page {{ books.number }} of {{ books.paginator.num_pages }}</span>
+  {% if books.has_next %}
+  <a href="?page={{ books.next_page_number }}">Next</a>
+  <a href="?page={{ books.paginator.num_pages }}">Last</a>
+  {% endif %}
 </div>
-{% endblock %}
