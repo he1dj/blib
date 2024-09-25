@@ -13,7 +13,6 @@
     blib
     {% endblock title %}
   </title>
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Behold My Awesome Project!" />
   <meta name="author" content="he1dj" />
@@ -21,40 +20,30 @@
   {% block css %}
   <!-- Your stuff: Third-party CSS libraries go here -->
   <!-- This file stores project-specific CSS -->
-
-
   {% render_bundle 'project' 'css' %}
-  {% component_css_dependencies %}
 
+  {% component_css_dependencies %}
 
   {% endblock css %}
   <!-- Le javascript
     ================================================== -->
   {# Placed at the top of the document so pages load faster with defer #}
   {% block javascript %}
-
-
   <!-- Vendor dependencies bundled as one file -->
   {% render_bundle 'vendors' 'js' attrs='defer' %}
-
-
   <!-- place project specific Javascript in this file -->
   <script src="{% static 'js/htmx/htmx.min.js' %}" defer></script>
 
-  {% component_js_dependencies %}
-
   {% render_bundle 'project' 'js' attrs='defer' %}
-
-
   {% endblock javascript %}
 </head>
 
 <body class="{% block bodyclass %}{% endblock bodyclass %}">
   {% block body %}
   <div class="mb-1">
-   {% block header %}
-   {% component "header" /%}
-   {% endblock header %}
+    {% block header %}
+    {% component 'header' / %}
+    {% endblock header %}
   </div>
   <div class="container">
     {% if messages %}
@@ -69,7 +58,6 @@
     {% block content %}
     {% endblock content %}
     {% endblock main %}
-
   </div>
   {% endblock body %}
   <!-- /container -->
@@ -85,6 +73,9 @@
     });
   </script>
   {% endcomment %}
+
+  {% component_js_dependencies %}
+
   {% endblock inline_javascript %}
 </body>
 

@@ -1,4 +1,3 @@
-# ruff: noqa
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -10,12 +9,14 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-
-from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
+from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
-from django_routify import include_router
-from blib.books.urls import books_router
+
+# from dj_routify import Router
+# from dj_routify import include_router
+
+# books_router = Router("/books", "books", auto_trailing_slash=False)
 
 
 urlpatterns = [
@@ -31,7 +32,8 @@ urlpatterns = [
     path("user/", include("blib.users.urls", namespace="users")),
     path("account/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    include_router(books_router),
+    # include_router(books_router),
+    path("books", include("blib.books.urls", namespace="books")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
@@ -82,6 +84,6 @@ if settings.DEBUG:
         path("500", default_views.server_error),
     ]
     if "debug_toolbar" in settings.INSTALLED_APPS:
-        import debug_toolbar  # type: ignore
+        import debug_toolbar  # type: ignore  # noqa: PGH003
 
-        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+        urlpatterns = [path("__debug__/", include(debug_toolbar.urls)), *urlpatterns]

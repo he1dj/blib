@@ -1,23 +1,36 @@
-{% extends 'base.html' %}
-
-{% block content %}
 <div class="book-detail">
-    <h1>{{ book.title }}</h1>
-    <img src="{{ book.cover_image.url }}" alt="Cover Image for {{ book.title }}" />
-    <p><strong>Author:</strong> {{ book.author }}</p>
-    <p><strong>Published on:</strong> {{ book.published_date }}</p>
-    <p><strong>Number of Pages:</strong> {{ book.number_of_pages }}</p>
-    <p><strong>Description:</strong> {{ book.description }}</p>
-    <p><strong>Categories:</strong>
-        {% for category in book.categories %}
-        {{ category.title }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    </p>
-    <p><strong>Tags:</strong>
-        {% for tag in book.tags %}
-        {{ tag.title }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    </p>
-    <a href="{{ book.pdf.url }}" download>Download PDF</a>
+  <h1>{{ book.title }}</h1>
+  <img src="{{ book.cover_image.url }}" alt="Cover Image for {{ book.title }}" />
+  <p>
+    <strong>Author:</strong> {{ book.author }}
+  </p>
+  <p>
+    <strong>Published on:</strong> {{ book.published_date }}
+  </p>
+  <p>
+    <strong>Number of Pages:</strong> {{ book.number_of_pages }}
+  </p>
+  <p>
+    <strong>Description:</strong> {{ book.description }}
+  </p>
+  <p>
+    <strong>Categories:</strong>
+    {% for category in book.categories %}
+    {{ category.title }}
+    {% if not
+    forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+  </p>
+  <p>
+    <strong>Tags:</strong>
+    {% for tag in book.tags %}
+    {{ tag.title }}
+    {% if not forloop.last %}
+    , {%
+    endif %}
+    {% endfor %}
+  </p>
+  <a href="{{ book.pdf.url }}" download>Download PDF</a>
 </div>
-{% endblock content %}

@@ -14,17 +14,32 @@ class BookAdmin(admin.ModelAdmin):
     readonly_fields = ("qr_code", "public_url", "upload_date", "last_edited")
 
     fieldsets = (
-        (None, {
-            "fields": (
-                "title", "slug", "author", "description", "pdf", "cover_image", "file_size",
-            ),
-        }),
-        ("Links & QR", {
-            "fields": ("public_url", "qr_code"),
-        }),
-        ("Timestamps", {
-            "fields": ("upload_date", "last_edited"),
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "title",
+                    "slug",
+                    "author",
+                    "description",
+                    "pdf",
+                    "cover_image",
+                    "file_size",
+                ),
+            },
+        ),
+        (
+            "Links & QR",
+            {
+                "fields": ("public_url", "qr_code"),
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": ("upload_date", "last_edited"),
+            },
+        ),
     )
 
 

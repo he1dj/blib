@@ -87,6 +87,7 @@ THIRD_PARTY_APPS = [
 WAGTAIL_APPS = [
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
+    "wagtail.contrib.settings",
     "wagtail.embeds",
     "wagtail.sites",
     "wagtail.users",
@@ -403,10 +404,10 @@ WEBPACK_LOADER = {
 WAGTAIL_SITE_NAME = "Blib CMS"
 WAGTAILADMIN_BASE_URL = "http://localhost:8000/cms"
 WAGTAILDOCS_EXTENSIONS = ["pdf", "png", "md", "jpg", "jpeg", "webp", "svg"]
-# WAGTAILSEARCH_BACKENDS = {
-#     "default": {
-#         "BACKEND": "wagtail.search.backends.database",
-#     },
-# }
+WAGTAILSEARCH_BACKENDS = {
+    "default": {
+        "BACKEND": "wagtail.search.backends.database",
+    },
+}
 
 SITE_URL = env("SITE_URL")

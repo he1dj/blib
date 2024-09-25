@@ -70,7 +70,7 @@ class Book(ClusterableModel, index.Indexed):
         FieldPanel("qr_code", read_only=True),
         FieldPanel("upload_date", read_only=True),
         FieldPanel("last_edited", read_only=True),
-        FieldPanel("size", read_only=True),
+        FieldPanel("file_size", read_only=True),
     ]
     search_fields = [
         index.SearchField("title"),
