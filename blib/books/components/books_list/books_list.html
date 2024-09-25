@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <ul class="book-list">
   {% for book in books %}
   <li class="book-item">
@@ -53,3 +56,4 @@
   <a href="?page={{ books.paginator.num_pages }}">Last</a>
   {% endif %}
 </div>
+{% endblock %}
