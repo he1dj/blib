@@ -5,6 +5,7 @@ networks:
 volumes:
   blib_local_postgres_data: {}
   blib_local_postgres_data_backups: {}
+  blib_local_pgadmin_data: {}
   blib_local_redis_data: {}
 
 services:
@@ -33,15 +34,27 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: blib_local_postgres
-    container_name: blib_local_postgres
+    image: blib_production_postgres
+    container_name: blib_production_postgres
     volumes:
       - blib_local_postgres_data:/var/lib/postgresql/data
       - blib_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+    networks:
+      - default_network
+
+  pgadmin4:
+    image: dpage/pgadmin4:latest
+    container_name: blib_local_pgadmin4
+    depends_on:
+      - postgres
+    volumes:
+      - blib_local_pgadmin_data:/var/lib/pgadmin
+    env_file:
+      - ./.envs/.local/.postgres
     ports:
-      - 5432:5432
+      - 8888:80
     networks:
       - default_network
 
@@ -49,7 +62,7 @@ services:
     image: docker.io/axllent/mailpit:latest
     container_name: blib_local_mailpit
     ports:
-      - "8025:8025"
+      - 8025:8025
     networks:
       - default_network
 

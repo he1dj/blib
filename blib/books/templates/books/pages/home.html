@@ -2,8 +2,9 @@
 
 {% block content %}
 <div>
-    <h1>
-        Books Home Page!
-    </h1>
+    <h1>Books Home Page!</h1>
+    <div class="book_list">
+        {% include 'books/book_list.html' %}
+    </div>
 </div>
 {% endblock content %}

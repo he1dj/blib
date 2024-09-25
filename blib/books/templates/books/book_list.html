@@ -1,0 +1,30 @@
+{% block books_list %}
+<ul>
+    {% for book in books %}
+    <li>
+        <h3>{{ book.title }}</h3>
+        <p>By: {{ book.author }}</p>
+        <p>{{ book.description|truncatewords:20 }}</p>
+        <p>UUID: {{ book.uuid }}</p>
+        <p>Slug: {{ book.slug }}</p>
+        <a href="{% url 'books:book_view' uuid=book.uuid slug=book.slug %}">Read More</a>
+    </li>
+    {% empty %}
+    <p>No books available.</p>
+    {% endfor %}
+</ul>
+
+<div class="pagination">
+    {% if books.has_previous %}
+    <a href="?page=1">First</a>
+    <a href="?page={{ books.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ books.number }} of {{ books.paginator.num_pages }}</span>
+
+    {% if books.has_next %}
+    <a href="?page={{ books.next_page_number }}">Next</a>
+    <a href="?page={{ books.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+{% endblock books_list %}
