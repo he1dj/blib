@@ -15,7 +15,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from django_routify import include_router
-from blib.books.views import books_router
+from blib.books.urls import books_router
 
 
 urlpatterns = [

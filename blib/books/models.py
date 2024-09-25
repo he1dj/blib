@@ -53,7 +53,7 @@ class Book(ClusterableModel, index.Indexed):
     qr_code = models.ImageField(upload_to="books/qr_codes/", blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now=True)
-    size = models.CharField(max_length=50, blank=True)
+    file_size = models.CharField(max_length=50, blank=True)
     panels = [
         FieldPanel("uuid", read_only=True),
         FieldPanel("title"),
@@ -70,24 +70,26 @@ class Book(ClusterableModel, index.Indexed):
         FieldPanel("qr_code", read_only=True),
         FieldPanel("upload_date", read_only=True),
         FieldPanel("last_edited", read_only=True),
-        FieldPanel("size"),
+        FieldPanel("size", read_only=True),
     ]
     search_fields = [
         index.SearchField("title"),
+        index.AutocompleteField("title"),
         index.SearchField("author"),
-        index.SearchField("description"),
+        index.AutocompleteField("author"),
         index.FilterField("published_date"),
         index.FilterField("number_of_pages"),
+        index.FilterField("file_size"),
         index.RelatedFields(
             "book_category_relationship",
             [
-                index.SearchField("category__title"),
+                index.FilterField("category__title"),
             ],
         ),
         index.RelatedFields(
             "book_tag_relationship",
             [
-                index.SearchField("tag__title"),
+                index.FilterField("tag__title"),
             ],
         ),
     ]
