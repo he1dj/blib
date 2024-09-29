@@ -92,9 +92,3 @@
 .pagination span {
   margin: 0 10px;
 }
-
-.pagination span.disabled {
-  pointer-events: none; /* Prevent clicking */
-  color: gray; /* Change color to indicate it's disabled */
-  text-decoration: none; /* Remove underline */
-}
