@@ -1,0 +1,77 @@
+<div id="book-list" hx-target="this">
+  <ul class="book-list">
+    {% for book in page_obj %}
+    <li class="book-item">
+      <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover" class="book-cover" />
+      <div class="book-details">
+        <h3>{{ book.title }}</h3>
+        <p><strong>Author:</strong> {{ book.author }}</p>
+        <p><strong>Published on:</strong> {{ book.published_date }}</p>
+        <p><strong>Pages:</strong> {{ book.number_of_pages }}</p>
+        <p><strong>File Size:</strong> {{ book.file_size }}</p>
+        <p>{{ book.description|truncatewords:20 }}</p>
+        <a href="{{ book.pdf.url }}" class="download-btn">Download PDF</a>
+        <a href="{% url 'books:book_details' uuid=book.uuid slug=book.slug %}" class="read-more">Read More</a>
+        <div class="book-tags">
+          <strong>Tags:</strong>
+          {% for tag in book.tags %}
+          <span class="tag">{{ tag }}</span>
+          {% empty %}
+          <span>No tags available</span>
+          {% endfor %}
+        </div>
+        <div class="book-categories">
+          <strong>Categories:</strong>
+          {% for category in book.categories %}
+          <span class="category">{{ category }}</span>
+          {% empty %}
+          <span>No categories available</span>
+          {% endfor %}
+        </div>
+      </div>
+    </li>
+    {% empty %}
+    <p>No books available.</p>
+    {% endfor %}
+  </ul>
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+    <a 
+      hx-get="?page=1" 
+      hx-push-url="?page=1"
+      hx-target="#book-list" 
+      hx-swap="outerHTML"
+    >First</a>
+    <a 
+      hx-get="?page={{ page_obj.previous_page_number }}" 
+      hx-push-url="?page={{ page_obj.previous_page_number }}"
+      hx-target="#book-list" 
+      hx-swap="outerHTML"
+    >Previous</a>
+    {% else %}
+    <span class="disabled">First</span>
+    <span class="disabled">Previous</span>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+    <a 
+      hx-get="?page={{ page_obj.next_page_number }}" 
+      hx-push-url="?page={{ page_obj.next_page_number }}"
+      hx-target="#book-list" 
+      hx-swap="outerHTML"
+    >Next</a>
+    <a 
+      hx-get="?page={{ page_obj.paginator.num_pages }}" 
+      hx-push-url="?page={{ page_obj.paginator.num_pages }}"
+      hx-target="#book-list" 
+      hx-swap="outerHTML"
+    >Last</a>
+    {% else %}
+    <span class="disabled">Next</span>
+    <span class="disabled">Last</span>
+    {% endif %}
+  </div>
+</div>

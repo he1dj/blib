@@ -1,12 +1,12 @@
 from django.urls import path
 
-from blib.books.components.book_details.book_details import BookDetails
-from blib.books.components.books_list.books_list import BooksList
+from blib.books.views import BookDetailView
+from blib.books.views import BookListView
 
 app_name = "books"
 
 urlpatterns = [
-    path("", BooksList.as_view(), name="books_list"),
-    path("/<str:uuid>", BookDetails.as_view()),
-    path("/<str:uuid>/<slug:slug>", BookDetails.as_view(), name="book_details"),
+    path("", BookListView.as_view(), name="books_list"),
+    path("/<str:uuid>", BookDetailView.as_view()),
+    path("/<str:uuid>/<slug:slug>", BookDetailView.as_view(), name="book_details"),
 ]

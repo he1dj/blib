@@ -104,6 +104,7 @@ WAGTAIL_APPS = [
 LOCAL_APPS = [
     "blib.users",
     "blib.books",
+    "blib.search",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

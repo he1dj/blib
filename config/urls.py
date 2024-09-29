@@ -27,6 +27,7 @@ urlpatterns = [
     path("account/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("books", include("blib.books.urls", namespace="books")),
+    path("search", include("blib.search.urls", namespace="search")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
