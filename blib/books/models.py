@@ -17,7 +17,9 @@ from wagtail.snippets.models import register_snippet
 
 @register_snippet
 class Category(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, max_length=55, blank=False)
 
     class Meta:
         verbose_name_plural = "categories"
@@ -28,7 +30,9 @@ class Category(models.Model):
 
 @register_snippet
 class Tag(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True, max_length=55, blank=False)
 
     class Meta:
         verbose_name_plural = "tags"
@@ -38,12 +42,25 @@ class Tag(models.Model):
 
 
 @register_snippet
-class Book(ClusterableModel, index.Indexed):
+class Author(index.Indexed, ClusterableModel):
+    id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=255, blank=False)
+    last_name = models.CharField(max_length=255, blank=False)
+    middle_name = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        verbose_name_plural = "authors"
+
+    def __str__(self) -> str:
+        return f"{self.last_name} {self.first_name} {self.middle_name}"
+
+
+@register_snippet
+class Book(index.Indexed, ClusterableModel):
     id = models.AutoField(primary_key=True)
     uuid = ShortUUIDField(unique=True, length=8, max_length=10)
     title = models.CharField(max_length=255, blank=False)
     slug = models.SlugField(unique=True, max_length=55, blank=False)
-    author = models.CharField(max_length=255)
     published_date = models.DateField(blank=False)
     number_of_pages = models.IntegerField(blank=False, default=0)
     description = models.TextField(max_length=1024, blank=True)
@@ -58,7 +75,7 @@ class Book(ClusterableModel, index.Indexed):
         FieldPanel("uuid", read_only=True),
         FieldPanel("title"),
         FieldPanel("slug"),
-        FieldPanel("author"),
+        InlinePanel("book_author_relationship", label="Authors"),
         FieldPanel("published_date"),
         FieldPanel("number_of_pages"),
         FieldPanel("description"),
@@ -129,6 +146,10 @@ class Book(ClusterableModel, index.Indexed):
         return ContentFile(qr_file.read(), name=f"qr_{self.uuid}_{self.slug}.png")
 
     @property
+    def authors(self):
+        return [n.category for n in self.book_author_relationship.all()]
+
+    @property
     def categories(self):
         return [n.category for n in self.book_category_relationship.all()]
 
@@ -137,7 +158,26 @@ class Book(ClusterableModel, index.Indexed):
         return [n.tag for n in self.book_tag_relationship.all()]
 
 
-class BookCategoryRelationship(models.Model, index.Indexed):
+class BookAuthorRelationship(index.Indexed, models.Model):
+    id = models.AutoField(primary_key=True)
+    Book = ParentalKey("Book", related_name="book_author_relationship")
+    author = models.ForeignKey("Author", on_delete=models.CASCADE, related_name="+")
+    panels = [FieldPanel("author")]
+    index.RelatedFields(
+        "book",
+        [
+            index.SearchField("title"),
+            index.FilterField("published_date"),
+            index.FilterField("number_of_pages"),
+        ],
+    )
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+
+class BookCategoryRelationship(index.Indexed, models.Model):
+    id = models.AutoField(primary_key=True)
     Book = ParentalKey("Book", related_name="book_category_relationship")
     category = models.ForeignKey("Category", on_delete=models.CASCADE, related_name="+")
     panels = [FieldPanel("category")]
@@ -154,7 +194,8 @@ class BookCategoryRelationship(models.Model, index.Indexed):
         return super().__str__()
 
 
-class BookTagRelationship(models.Model, index.Indexed):
+class BookTagRelationship(index.Indexed, models.Model):
+    id = models.AutoField(primary_key=True)
     Book = ParentalKey("Book", related_name="book_tag_relationship")
     tag = models.ForeignKey("Tag", on_delete=models.CASCADE, related_name="+")
     panels = [FieldPanel("tag")]
