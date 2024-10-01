@@ -1,6 +1,7 @@
 import io
+from pathlib import Path
 
-# import PyPDF2
+import PyPDF2
 import qrcode
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -121,8 +122,9 @@ class Book(index.Indexed, ClusterableModel):
         if not self.slug:
             self.slug = self.generate_slug()
         self.public_url = self.generate_public_url()
-        self.number_of_pages = 0
         self.qr_code = self.generate_qr_code(self.public_url)
+        self.number_of_pages = self.get_book_pages()
+        self.file_size = self.get_file_size()
         super().save(*args, **kwargs)
 
     def generate_slug(self):
@@ -133,6 +135,22 @@ class Book(index.Indexed, ClusterableModel):
             unique_slug = f"{slug}-{num}"
             num += 1
         return unique_slug
+
+    def get_book_pages(self):
+        pdf_path = Path(self.pdf.path)
+        with pdf_path.open("rb") as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            return len(pdf_reader.pages)
+
+    def get_file_size(self):
+        pdf_path = Path(self.pdf.path)
+        file_size_bytes = pdf_path.stat().st_size
+        mb = 1024
+        if file_size_bytes < mb:
+            return f"{file_size_bytes} bytes"
+        if file_size_bytes < mb ** 2:
+            return f"{file_size_bytes / mb:.2f} KB"
+        return f"{file_size_bytes / (mb ** 2):.2f} MB"
 
     def generate_public_url(self):
         site_url = settings.SITE_URL
@@ -147,7 +165,7 @@ class Book(index.Indexed, ClusterableModel):
 
     @property
     def authors(self):
-        return [n.category for n in self.book_author_relationship.all()]
+        return [n.author for n in self.book_author_relationship.all()]
 
     @property
     def categories(self):

@@ -1,5 +1,85 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Search Page!</h1>
+<form method="get" action="{% url 'search:search' %}">
+  <input type="text" name="q" placeholder="Search books..." value="{{ query }}">
+  
+  <select name="year">
+    <option value="">Year</option>
+    {% for year in years %}
+    <option value="{{ year.year }}" {% if request.GET.year == year.year|stringformat:"s" %}selected{% endif %}>
+        {{ year.year }}
+    </option>
+    {% endfor %}
+  </select>
+  
+  <select name="author">
+    <option value="">Author</option>
+    {% for author in authors %}
+    <option value="{{ author.name }}" {% if request.GET.author == author.name %}selected{% endif %}>
+        {{ author.name }}
+    </option>
+    {% endfor %}
+  </select>
+  
+  <select name="category">
+    <option value="">Category</option>
+    {% for category in categories %}
+    <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>
+        {{ category.name }}
+    </option>
+    {% endfor %}
+  </select>
+  
+  <select name="tag">
+    <option value="">Tag</option>
+    {% for tag in tags %}
+    <option value="{{ tag.name }}" {% if request.GET.tag == tag.name %}selected{% endif %}>
+        {{ tag.name }}
+    </option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Search</button>
+</form>
+
+
+
+{% for result in search_results %}
+<li class="book-item">
+  {% if result.cover_image %}
+  <img src="{{ result.cover_image.url }}" alt="{{ result.title }} cover" class="book-cover" />
+  {% else %}
+  <p class="book-cover">{{ result.title }} cover</p>
+  {% endif %}
+  <div class="book-details">
+    <h3>{{ result.title }}</h3>
+    <p><strong>Author:</strong> {% for author in result.authors %}{{ author }}{% endfor %}</p>
+    <p><strong>Published on:</strong> {{ result.published_date }}</p>
+    <p><strong>Pages:</strong> {{ result.number_of_pages }}</p>
+    <p><strong>File Size:</strong> {{ result.file_size }}</p>
+    <p>{{ result.description|truncatewords:20 }}</p>
+    <a href="{{ result.pdf.url }}" class="download-btn">Download PDF</a>
+    <a href="{% url 'books:book_details' uuid=result.uuid slug=result.slug %}" class="read-more">Read More</a>
+    <div class="book-tags">
+      <strong>Tags:</strong>
+      {% for tag in result.tags %}
+      <span class="tag">{{ tag }}</span>
+      {% empty %}
+      <span>No tags available</span>
+      {% endfor %}
+    </div>
+    <div class="book-categories">
+      <strong>Categories:</strong>
+      {% for category in result.categories %}
+      <span class="category">{{ category }}</span>
+      {% empty %}
+      <span>No categories available</span>
+      {% endfor %}
+    </div>
+  </div>
+</li>
+{% empty %}
+<p>No results available.</p>
+{% endfor %}
 {% endblock %}
