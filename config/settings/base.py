@@ -105,6 +105,8 @@ LOCAL_APPS = [
     "blib.users",
     "blib.books",
     "blib.search",
+    "blib.user_profiles",
+    "blib.subscriptions",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
