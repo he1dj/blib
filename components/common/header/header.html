@@ -47,7 +47,7 @@
             {{ request.user.email }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'users:detail' request.user.pk %}">{% translate "My Profile" %}</a>
+            <a class="dropdown-item" href="{% url 'user_profiles:profile' %}">{% translate "My Profile" %}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
           </div>
