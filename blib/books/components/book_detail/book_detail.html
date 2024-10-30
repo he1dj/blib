@@ -1,6 +1,10 @@
 <div class="book-detail">
   <h1>{{ book.title }}</h1>
-  <img src="{{ book.cover_image.url }}" alt="Cover Image for {{ book.title }}" />
+  {% if book.cover_image %}
+  <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover" class="book-cover" />
+  {% else %}
+  <p class="book-cover">{{ book.title }} cover</p>
+  {% endif %}
   <p>
     <strong>Author:</strong> {{ book.author }}
   </p>
