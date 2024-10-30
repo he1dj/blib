@@ -7,6 +7,8 @@ volumes:
   blib_local_postgres_data_backups: {}
   blib_local_pgadmin_data: {}
   blib_local_redis_data: {}
+  certs: {}
+
 
 services:
   django: &django
