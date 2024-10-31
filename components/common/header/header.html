@@ -49,7 +49,10 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="{% url 'user_profiles:profile' %}">{% translate "My Profile" %}</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
+            <form method="POST" action="/account/logout/" class="dropdown-item">
+              {% csrf_token %}
+              <button type="submit">{% translate "Sign Out" %}</a>
+            </form>  
           </div>
         </li>
         {% else %}

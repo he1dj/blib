@@ -92,8 +92,6 @@ class Book(index.Indexed, ClusterableModel):
     search_fields = [
         index.SearchField("title"),
         index.AutocompleteField("title"),
-        index.SearchField("author"),
-        index.AutocompleteField("author"),
         index.FilterField("published_date"),
         index.FilterField("number_of_pages"),
         index.FilterField("file_size"),
