@@ -9,19 +9,20 @@ from django.utils.translation import gettext_lazy as _
 from .managers import UserManager
 from blib.user_profiles.models import UserProfile
 
+
 class User(AbstractUser):
     """
-    Custom user model for the application `blib`. This model extends the default Django `AbstractUser` 
-    by replacing `email` as the primary identifier and adding an optional `profile` field for linking 
+    Custom user model for the application `blib`. This model extends the default Django `AbstractUser`
+    by replacing `email` as the primary identifier and adding an optional `profile` field for linking
     a `UserProfile` instance.
-    
+
     Fields:
         name (str): Optional first name of the user.
         last_name (str): Optional last name of the user.
         email (str): Primary identifier for login, must be unique.
         username (str): Optional unique nickname. Auto-generated if left blank during creation.
         profile (OneToOneField): Links to a `UserProfile` instance. Created automatically when a user is saved.
-        
+
     Attributes:
         USERNAME_FIELD (str): Designates `email` as the unique identifier for user login.
         REQUIRED_FIELDS (list): Required fields for user creation. Empty here since we only use `email`.
@@ -29,7 +30,7 @@ class User(AbstractUser):
     Methods:
         get_absolute_url (str): Returns the URL for the user's profile view.
         generate_username (str): Generates a unique username based on email if not provided.
-        
+
     """
 
     # First and last name do not cover name patterns around the globe
@@ -42,31 +43,38 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    objects: ClassVar[UserManager] = UserManager() 
-    
+    objects: ClassVar[UserManager] = UserManager()
+
+    def save(self, *args, **kwargs):
+        """
+        Overridden save method to generate a unique username if not provided.
+        """
+        self.generate_username()
+        super().save(*args, **kwargs)
+
     def get_absolute_url(self) -> str:
         """
         Returns the URL for the user's detail view.
-        
+
         Returns:
             str: URL path to access the detail page of the user.
         """
-        return reverse("users:detail", kwargs={"pk": self.id})
-    
+        return reverse("user_profile:detail", kwargs={"pk": self.id})
+
     def generate_username(self):
         """
         Generates a unique username based on the email if `username` field is empty.
-        
-        This function splits the email at `@`, uses the prefix as a base, and appends a number 
+
+        This function splits the email at `@`, uses the prefix as a base, and appends a number
         if a user with the same username already exists.
-        
+
         Returns:
             str: The generated unique username.
 
         Raises:
             IntegrityError: If the unique constraint fails during save operation.
         """
-        
+
         if not self.username:
             base_username = self.email.split('@')[0]
             potential_username = base_username
@@ -80,4 +88,13 @@ class User(AbstractUser):
 
                 self.username = potential_username
                 self.save()
+        return self.username
+
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the user.
+
+        Returns:
+            str: String representation of the user.
+        """
         return self.username
