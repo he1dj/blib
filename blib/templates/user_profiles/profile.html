@@ -2,7 +2,9 @@
 
 {% block content %}
     <h1>Profile of {{ profile.user.email }}</h1>
+    {% if profile.profile_image %}
     <img src="{{ profile.profile_image.url }}" width="150" height="150" alt="Avatar">
+    {% endif %}
     <p><strong>Email</strong>: {{ profile.user.email }}</p>
     <p><strong>Name</strong>: {{ profile.user.name }}</p>
     <p><strong>Bio</strong>: {{ profile.bio }}</p>

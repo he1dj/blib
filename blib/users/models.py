@@ -50,6 +50,7 @@ class User(AbstractUser):
         Overridden save method to generate a unique username if not provided.
         """
         self.generate_username()
+        self.create_profile()
         super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
@@ -59,7 +60,7 @@ class User(AbstractUser):
         Returns:
             str: URL path to access the detail page of the user.
         """
-        return reverse("user_profile:detail", kwargs={"pk": self.id})
+        return reverse("user_profile:detail", kwargs={"user_id": self.id})
 
     def generate_username(self):
         """
@@ -90,11 +91,19 @@ class User(AbstractUser):
                 self.save()
         return self.username
 
+    def create_profile(self):
+        """
+        Creates a `UserProfile` instance for the user.
+
+        Returns:
+            UserProfile: The created `UserProfile` instance.
+        """
+        profile = UserProfile(user=self)
+        profile.save()
+        return profile
+
     def __str__(self) -> str:
         """
         Returns a string representation of the user.
-
-        Returns:
-            str: String representation of the user.
         """
         return self.username
