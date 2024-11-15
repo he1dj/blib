@@ -58,7 +58,7 @@
         {% else %}
           {% if ACCOUNT_ALLOW_REGISTRATION %}
           <li class="nav-item">
-            <a type="button" class="nav-link" data-bs-toggle="modal" data-bs-target="#registerModal">{% translate "Sign Up" %}</a>
+            <a class="nav-link" href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
           </li>
           {% endif %}
           <li class="nav-item">

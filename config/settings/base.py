@@ -371,6 +371,8 @@ SOCIALACCOUNT_FORMS = {"signup": "blib.users.forms.UserSocialSignupForm"}
 
 ACCOUNT_EMAIL_NOTIFICATIONS = True
 
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+
 # https://docs.allauth.org/en/latest/account/forms.html
 ACCOUNT_FORMS = {"signup": "blib.users.forms.UserSignupForm"}
 
