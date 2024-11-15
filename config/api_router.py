@@ -7,8 +7,8 @@ from blib.subscriptions.views import SubscriptionsViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
-router.register("users", UserViewSet)
-router.register("subscriptions", SubscriptionsViewSet)
+router.register("users", UserViewSet, basename="users")
+router.register("subscriptions", SubscriptionsViewSet, basename="subscriptions")
 
 app_name = "api"
 urlpatterns = router.urls

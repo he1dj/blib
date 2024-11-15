@@ -5,7 +5,7 @@ from .forms import UserProfileForm
 
 @login_required
 def user_profile(request):
-    user_profile = request.user.userprofile
+    user_profile = request.user.profile
     return render(request, 'user_profiles/profile.html', {'profile': user_profile})
 
 

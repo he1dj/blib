@@ -1,45 +1,29 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView
-from django.views.generic import RedirectView
-from django.views.generic import UpdateView
-
-from blib.users.models import User
+from allauth.account.views import (
+    LoginView as Login, 
+    SignupView as Signup, 
+    PasswordChangeView as PasswordChange, 
+    PasswordSetView as PasswordSet, 
+    PasswordResetView as PasswordReset, 
+)
 
 
-class UserDetailView(LoginRequiredMixin, DetailView):
-    model = User
-    slug_field = "id"
-    slug_url_kwarg = "id"
+class LoginView(Login):
+    template_name = 'users/login.html'
+    
 
+class SignupView(Signup):
+    template_name = 'users/signup.html'
+    
 
-user_detail_view = UserDetailView.as_view()
+class PasswordChangeView(PasswordChange):
+    template_name = 'users/password_change.html'
+    
 
+class PasswordSetView(PasswordSet):
+    template_name = 'users/password_set.html'
+    success_url = 'user_profiles:profile'
+    
 
-class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = User
-    fields = ["name"]
-    success_message = _("Information successfully updated")
-
-    def get_success_url(self):
-        # for mypy to know that the user is authenticated
-        assert self.request.user.is_authenticated
-        return self.request.user.get_absolute_url()
-
-    def get_object(self):
-        return self.request.user
-
-
-user_update_view = UserUpdateView.as_view()
-
-
-class UserRedirectView(LoginRequiredMixin, RedirectView):
-    permanent = False
-
-    def get_redirect_url(self):
-        return reverse("users:detail", kwargs={"pk": self.request.user.pk})
-
-
-user_redirect_view = UserRedirectView.as_view()
+class PasswordResetView(PasswordReset):
+    template_name = 'users/password_reset.html'
+    

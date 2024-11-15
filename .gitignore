@@ -176,6 +176,8 @@ ehthumbs_vista.db
 
 # Folder config file
 Desktop.ini
+.idea
+.idea/*
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
