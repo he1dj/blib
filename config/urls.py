@@ -24,8 +24,7 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("user/", include("blib.users.urls", namespace="users")),
-    path("account/", include("allauth.urls")),
+    path("account/", include("users.urls")),
     # Your stuff: custom urls includes go here
     path("books", include("blib.books.urls", namespace="books")),
     path("search", include("blib.search.urls", namespace="search")),

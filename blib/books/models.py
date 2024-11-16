@@ -119,6 +119,7 @@ class Book(index.Indexed, ClusterableModel):
     def __str__(self):
         return self.title
 
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self.generate_slug()

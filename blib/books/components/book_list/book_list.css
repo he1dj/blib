@@ -8,7 +8,8 @@ a {
   cursor: pointer;
 }
 
-a[disabled], a[disabled]:hover {
+a[disabled],
+a[disabled]:hover {
   color: #aaa;
   pointer-events: none;
   cursor: not-allowed;
@@ -18,6 +19,18 @@ a[disabled], a[disabled]:hover {
 a.active {
   font-weight: bold;
   color: #000;
+}
+
+.book-list {
+  transition: opacity 500ms ease-in;
+}
+
+.htmx-request .book-list {
+  opacity: 0;
+}
+
+.htmx-request.book-list {
+  opacity: 0;
 }
 
 .book-item {

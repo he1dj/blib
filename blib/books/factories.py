@@ -1,3 +1,4 @@
+import random
 import secrets
 
 import factory
@@ -76,26 +77,33 @@ class BookFactory(DjangoModelFactory):
         if not create:
             return
         num_authors = secrets.randbelow(3) + 1
-        authors = extracted or AuthorFactory.create_batch(num_authors)
+        if extracted:
+            authors = random.sample(extracted, min(len(extracted), num_authors))
+        else:
+            authors = AuthorFactory.create_batch(num_authors)
         for author in authors:
             BookAuthorRelationship.objects.create(Book=self, author=author)
-
 
     @factory.post_generation
     def add_categories(self, create, extracted, **kwargs):
         if not create:
             return
         num_categories = secrets.randbelow(2) + 1
-        categories = extracted or CategoryFactory.create_batch(num_categories)
+        if extracted:
+            categories = random.sample(extracted, min(len(extracted), num_categories))
+        else:
+            categories = CategoryFactory.create_batch(num_categories)
         for category in categories:
             BookCategoryRelationship.objects.create(Book=self, category=category)
-
 
     @factory.post_generation
     def add_tags(self, create, extracted, **kwargs):
         if not create:
             return
-        num_tags = secrets.randbelow(3) + 2
-        tags = extracted or TagFactory.create_batch(num_tags)
+        num_tags = secrets.randbelow(4) + 1
+        if extracted:
+            tags = random.sample(extracted, min(len(extracted), num_tags))
+        else:
+            tags = TagFactory.create_batch(num_tags)
         for tag in tags:
             BookTagRelationship.objects.create(Book=self, tag=tag)

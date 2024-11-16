@@ -23,4 +23,9 @@ module.exports = merge(commonConfig, {
     hot: false,
     liveReload: true,
   },
+  watch: true,
+  watchOptions: {
+    aggregateTimeout: 500,
+    poll: 1000,
+  },
 });

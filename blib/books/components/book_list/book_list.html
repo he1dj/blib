@@ -1,42 +1,42 @@
 <div id="book-list" hx-target="this">
+  <div class="sorting">
+    <strong>Sort by:</strong>
+    <a href="?sort=latest" hx-get="?sort=latest" hx-push-url="?sort=latest" hx-target="#book-list" hx-swap="outerHTML"
+      hx-disabled-elt="this" {% if sort_by == 'latest' %} class="active" hx-disable="true" {% endif %}>Newest</a>
+    <a href="?sort=oldest" hx-get="?sort=oldest" hx-push-url="?sort=oldest" hx-target="#book-list" hx-swap="outerHTML"
+      hx-disabled-elt="this" {% if sort_by == 'oldest' %} class="active" hx-disable="true" {% endif %}>Oldest</a>
+    <a href="?sort=title" hx-get="?sort=title" hx-push-url="?sort=title" hx-target="#book-list" hx-swap="outerHTML"
+      hx-disabled-elt="this" {% if sort_by == 'title' %} class="active" hx-disable="true" {% endif %}>Title</a>
+  </div>
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+    <a hx-get="?page=1&sort={{ sort_by }}" hx-push-url="?page=1&sort={{ sort_by }}" hx-target="#book-list"
+      hx-swap="outerHTML">First</a>
+    <a hx-get="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}"
+      hx-push-url="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}" hx-target="#book-list"
+      hx-swap="outerHTML">Previous</a>
+    {% else %}
+    <span class="disabled">First</span>
+    <span class="disabled">Previous</span>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+    <a hx-get="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}"
+      hx-push-url="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}" hx-target="#book-list"
+      hx-swap="outerHTML">Next</a>
+    <a hx-get="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}"
+      hx-push-url="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}" hx-target="#book-list"
+      hx-swap="outerHTML">Last</a>
+    {% else %}
+    <span class="disabled">Next</span>
+    <span class="disabled">Last</span>
+    {% endif %}
+  </div>
+
   <ul class="book-list">
-    <div class="sorting">
-      <strong>Sort by:</strong>
-      <a href="?sort=latest" hx-get="?sort=latest" hx-push-url="?sort=latest" hx-target="#book-list" hx-swap="outerHTML"
-        hx-disabled-elt="this" {% if sort_by == 'latest' %} class="active" hx-disable="true" {% endif %}>Newest</a>
-      <a href="?sort=oldest" hx-get="?sort=oldest" hx-push-url="?sort=oldest" hx-target="#book-list" hx-swap="outerHTML"
-        hx-disabled-elt="this" {% if sort_by == 'oldest' %} class="active" hx-disable="true" {% endif %}>Oldest</a>
-      <a href="?sort=title" hx-get="?sort=title" hx-push-url="?sort=title" hx-target="#book-list" hx-swap="outerHTML"
-        hx-disabled-elt="this" {% if sort_by == 'title' %} class="active" hx-disable="true" {% endif %}>Title</a>
-    </div>
-
-    <div class="pagination">
-      {% if page_obj.has_previous %}
-      <a hx-get="?page=1&sort={{ sort_by }}" hx-push-url="?page=1&sort={{ sort_by }}" hx-target="#book-list"
-        hx-swap="outerHTML">First</a>
-      <a hx-get="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}"
-        hx-push-url="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}" hx-target="#book-list"
-        hx-swap="outerHTML">Previous</a>
-      {% else %}
-      <span class="disabled">First</span>
-      <span class="disabled">Previous</span>
-      {% endif %}
-
-      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-
-      {% if page_obj.has_next %}
-      <a hx-get="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}"
-        hx-push-url="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}" hx-target="#book-list"
-        hx-swap="outerHTML">Next</a>
-      <a hx-get="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}"
-        hx-push-url="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}" hx-target="#book-list"
-        hx-swap="outerHTML">Last</a>
-      {% else %}
-      <span class="disabled">Next</span>
-      <span class="disabled">Last</span>
-      {% endif %}
-    </div>
-
     {% for book in page_obj %}
     <li class="book-item">
       {% if book.cover_image %}
