@@ -7,5 +7,6 @@ from wagtail import hooks
 def editor_js():
     return format_html(
         '<script src="https://cdn.jsdelivr.net/npm/slugify@1.6.6/slugify.min.js"></script>'
-        '<script src="{}"></script>', static("books/js/slug-auto-fill.js"),
+        '<script src="{}"></script>',
+        static("books/js/slug-auto-fill.js"),
     )

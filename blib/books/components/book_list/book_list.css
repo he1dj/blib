@@ -4,6 +4,22 @@
   background-color: gray;
 }
 
+a {
+  cursor: pointer;
+}
+
+a[disabled], a[disabled]:hover {
+  color: #aaa;
+  pointer-events: none;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+a.active {
+  font-weight: bold;
+  color: #000;
+}
+
 .book-item {
   display: flex;
   align-items: flex-start;

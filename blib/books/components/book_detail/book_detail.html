@@ -6,7 +6,8 @@
   <p class="book-cover">{{ book.title }} cover</p>
   {% endif %}
   <p>
-    <strong>Author:</strong> {{ book.author }}
+    <strong>{% if book.authors|length > 1 %}Authors:{% else %}Author:{% endif %}</strong>
+    {{ book.authors|join:", " }}
   </p>
   <p>
     <strong>Published on:</strong> {{ book.published_date }}

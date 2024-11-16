@@ -13,21 +13,38 @@ from blib.books.models import Book
 class BookListView(ListView):
     model = Book
     template_name = "books/book_list.html"
-    paginate_by = 2
+    paginate_by = 10
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
         context = self.get_context_data(object_list=self.object_list)
         if self.request.htmx:
-            html = BookListComponent.render(context)
+            html = BookListComponent.render(
+                context,
+            )
             return HttpResponse(html)
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Book.objects.all().distinct()
+        sort_by = self.request.GET.get("sort", "latest")
+        queryset = Book.objects.all().prefetch_related(
+            "book_author_relationship__author",
+            "book_category_relationship__category",
+            "book_tag_relationship__tag",
+        )
+        if sort_by == "oldest":
+            return queryset.order_by("upload_date")
+        if sort_by == "title":
+            return queryset.order_by("title")
+        return queryset.order_by("-upload_date")
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context["sort_by"] = self.request.GET.get(
+            "sort",
+            "latest",
+        )
+        return context
 
 
 class BookDetailView(DetailView):

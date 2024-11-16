@@ -1,6 +1,7 @@
 import io
 from pathlib import Path
 
+import pdf2image
 import PyPDF2
 import qrcode
 from django.conf import settings
@@ -123,7 +124,18 @@ class Book(index.Indexed, ClusterableModel):
             self.slug = self.generate_slug()
         self.public_url = self.generate_public_url()
         self.qr_code = self.generate_qr_code(self.public_url)
-        self.number_of_pages = self.get_book_pages()
+        if not self.cover_image and self.pdf:
+            try:
+                self.cover_image = self.get_cover_image()
+            except Exception as e:
+                msg = f"Failed to extract cover image: {e}"
+                raise ValueError(msg) from e
+        if not self.number_of_pages and self.pdf:
+            try:
+                self.number_of_pages = self.get_book_pages()
+            except Exception as e:
+                msg = f"Failed to calculate number of pages: {e}"
+                raise ValueError(msg) from e
         self.file_size = self.get_file_size()
         super().save(*args, **kwargs)
 
@@ -135,6 +147,10 @@ class Book(index.Indexed, ClusterableModel):
             unique_slug = f"{slug}-{num}"
             num += 1
         return unique_slug
+
+    def get_cover_image(self):
+        pdf_path = Path(self.pdf.path)
+        return pdf2image.convert_from_path(pdf_path)
 
     def get_book_pages(self):
         pdf_path = Path(self.pdf.path)
@@ -148,7 +164,7 @@ class Book(index.Indexed, ClusterableModel):
         mb = 1024
         if file_size_bytes < mb:
             return f"{file_size_bytes} bytes"
-        if file_size_bytes < mb ** 2:
+        if file_size_bytes < mb**2:
             return f"{file_size_bytes / mb:.2f} KB"
         return f"{file_size_bytes / (mb ** 2):.2f} MB"
 
