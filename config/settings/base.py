@@ -190,7 +190,7 @@ STATICFILES_FINDERS = [
 # Django components
 COMPONENTS = {
     "dirs": [
-        BASE_DIR / "components",
+        BASE_DIR / "blib" / "components",
     ],
     "app_dirs": [
         "components",

@@ -8,17 +8,16 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('books', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserProfile',
+            name='Subscriptions',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('bio', models.TextField(blank=True, max_length=500)),
-                ('location', models.CharField(blank=True, max_length=30)),
-                ('birth_date', models.DateField(blank=True, null=True)),
-                ('profile_image', models.ImageField(blank=True, null=True, upload_to='profile_images')),
+                ('date_subscribed', models.DateTimeField(auto_now_add=True)),
+                ('categories', models.ManyToManyField(related_name='subscribed_categories', to='books.category')),
             ],
         ),
     ]

@@ -274,7 +274,7 @@ tags
 dump.rdb
 
 ### Project template
-blib/media/
+blib/media/*/
 
 .pytest_cache/
 .ipython/

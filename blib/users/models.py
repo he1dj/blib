@@ -1,13 +1,14 @@
-
 from typing import ClassVar
 
 from django.contrib.auth.models import AbstractUser
-from django.db import models, transaction
+from django.db import models
+from django.db import transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from .managers import UserManager
 from blib.user_profiles.models import UserProfile
+
+from .managers import UserManager
 
 
 class User(AbstractUser):
@@ -37,8 +38,14 @@ class User(AbstractUser):
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     last_name = models.CharField(_("Last Name of User"), blank=True, max_length=255)
     email = models.EmailField(_("email address"), unique=True)
-    username = models.CharField(_("Username (Nickname)"), blank=True,max_length=255, unique=True)
-    profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='user')
+    username = models.CharField(
+        _("Username (Nickname)"), blank=True, max_length=255, unique=True,
+    )
+    profile = models.OneToOneField(
+        UserProfile,
+        on_delete=models.CASCADE,
+        related_name="user",
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -77,7 +84,7 @@ class User(AbstractUser):
         """
 
         if not self.username:
-            base_username = self.email.split('@')[0]
+            base_username = self.email.split("@")[0]
             potential_username = base_username
             counter = 1
 

@@ -7,6 +7,7 @@ import qrcode
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
+from django.forms import ValidationError
 from django.utils.text import slugify
 from shortuuid.django_fields import ShortUUIDField
 from wagtail.admin.panels import FieldPanel
@@ -94,8 +95,8 @@ class Book(index.Indexed, ClusterableModel):
     search_fields = [
         index.SearchField("title"),
         index.AutocompleteField("title"),
-        index.SearchField("author"),
-        index.AutocompleteField("author"),
+        index.SearchField("authors"),
+        index.AutocompleteField("authors"),
         index.FilterField("published_date"),
         index.FilterField("number_of_pages"),
         index.FilterField("file_size"),
@@ -119,26 +120,34 @@ class Book(index.Indexed, ClusterableModel):
     def __str__(self):
         return self.title
 
-
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self.generate_slug()
-        self.public_url = self.generate_public_url()
-        self.qr_code = self.generate_qr_code(self.public_url)
-        if not self.cover_image and self.pdf:
-            try:
-                self.cover_image = self.get_cover_image()
-            except Exception as e:
-                msg = f"Failed to extract cover image: {e}"
-                raise ValueError(msg) from e
-        if not self.number_of_pages and self.pdf:
+        super().save(*args, **kwargs)
+        if self.pdf and Path(self.pdf.path).exists():
             try:
                 self.number_of_pages = self.get_book_pages()
+                self.file_size = self.get_file_size()
+                self.public_url = self.generate_public_url()
+                self.qr_code.save(
+                    name=f"qr_{self.uuid}_{self.slug}.png",
+                    content=self.generate_qr_code(self.public_url),
+                    save=False,
+                )
+                if not self.cover_image:
+                    self.cover_image = self.get_cover_image()
             except Exception as e:
-                msg = f"Failed to calculate number of pages: {e}"
-                raise ValueError(msg) from e
-        self.file_size = self.get_file_size()
-        super().save(*args, **kwargs)
+                msg = f"Error processing the file: {e}"
+                raise ValidationError(msg) from e
+        super().save(
+            update_fields=[
+                "number_of_pages",
+                "file_size",
+                "public_url",
+                "qr_code",
+                "cover_image",
+            ],
+        )
 
     def generate_slug(self):
         slug = slugify(self.title)
@@ -148,10 +157,6 @@ class Book(index.Indexed, ClusterableModel):
             unique_slug = f"{slug}-{num}"
             num += 1
         return unique_slug
-
-    def get_cover_image(self):
-        pdf_path = Path(self.pdf.path)
-        return pdf2image.convert_from_path(pdf_path)
 
     def get_book_pages(self):
         pdf_path = Path(self.pdf.path)
@@ -169,6 +174,17 @@ class Book(index.Indexed, ClusterableModel):
             return f"{file_size_bytes / mb:.2f} KB"
         return f"{file_size_bytes / (mb ** 2):.2f} MB"
 
+    def get_cover_image(self):
+        pdf_path = Path(self.pdf.path)
+        if not pdf_path.exists():
+            msg = f"The file {pdf_path} does not exist."
+            raise FileNotFoundError(msg)
+        cover_image = pdf2image.convert_from_path(pdf_path, first_page=1, last_page=1)[0]
+        cover_image_io = io.BytesIO()
+        cover_image.save(cover_image_io, format="PNG")
+        cover_image_name = f"cover_{self.slug}_{self.uuid}.png"
+        return ContentFile(cover_image_io.getvalue(), name=cover_image_name)
+
     def generate_public_url(self):
         site_url = settings.SITE_URL
         return f"{site_url}/books/{self.uuid}/{self.slug}"
@@ -178,7 +194,8 @@ class Book(index.Indexed, ClusterableModel):
         qr_file = io.BytesIO()
         qr.save(qr_file, "PNG")
         qr_file.seek(0)
-        return ContentFile(qr_file.read(), name=f"qr_{self.uuid}_{self.slug}.png")
+        qr_name = f"qr_{self.slug}_{self.uuid}.png"
+        return ContentFile(qr_file.read(), name=qr_name)
 
     @property
     def authors(self):

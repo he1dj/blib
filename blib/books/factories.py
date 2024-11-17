@@ -1,7 +1,11 @@
 import random
 import secrets
+import shutil
+from pathlib import Path
 
 import factory
+from django.conf import settings
+from django.core.files import File
 from django.utils.text import slugify
 from factory.django import DjangoModelFactory
 from faker import Faker
@@ -62,14 +66,12 @@ class BookFactory(DjangoModelFactory):
     published_date = factory.Faker("date_between", start_date="-10y", end_date="today")
     number_of_pages = factory.Faker("random_int", min=50, max=1000)
     description = factory.Faker("paragraph")
-    pdf = factory.django.FileField(
-        filename="books/pdfs/mock.pdf", data=b"Mock PDF Content",
-    )
-    cover_image = factory.django.ImageField(
-        filename="mock_cover.jpg",
-        width=200,
-        height=300,
-    )
+    pdf = factory.LazyAttribute(lambda _: clone_pdf("mock.pdf"))
+    # cover_image = factory.django.ImageField(
+    #     filename="mock/mock_cover.jpg",
+    #     width=200,
+    #     height=300,
+    # )
     file_size = "500 KB"
 
     @factory.post_generation
@@ -107,3 +109,16 @@ class BookFactory(DjangoModelFactory):
             tags = TagFactory.create_batch(num_tags)
         for tag in tags:
             BookTagRelationship.objects.create(Book=self, tag=tag)
+
+
+def clone_pdf(source_file):
+    source_path = Path(source_file)
+    media_path = Path(settings.MEDIA_ROOT) / source_path.name
+    destination_dir = Path(settings.MEDIA_ROOT) / "books" / "pdfs"
+    destination_dir.mkdir(parents=True, exist_ok=True)
+    destination = destination_dir / f"{source_path.stem}_copy{source_path.suffix}"
+    if not media_path.exists():
+        msg = f"Source file '{media_path}' does not exist."
+        raise FileNotFoundError(msg)
+    shutil.copy(media_path, destination)
+    return File(destination.open("rb"), name=destination.name)

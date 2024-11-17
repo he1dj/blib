@@ -1,21 +1,33 @@
 <div id="book-list" hx-target="this">
   <div class="sorting">
     <strong>Sort by:</strong>
-    <a href="?sort=latest" hx-get="?sort=latest" hx-push-url="?sort=latest" hx-target="#book-list" hx-swap="outerHTML"
-      hx-disabled-elt="this" {% if sort_by == 'latest' %} class="active" hx-disable="true" {% endif %}>Newest</a>
-    <a href="?sort=oldest" hx-get="?sort=oldest" hx-push-url="?sort=oldest" hx-target="#book-list" hx-swap="outerHTML"
-      hx-disabled-elt="this" {% if sort_by == 'oldest' %} class="active" hx-disable="true" {% endif %}>Oldest</a>
-    <a href="?sort=title" hx-get="?sort=title" hx-push-url="?sort=title" hx-target="#book-list" hx-swap="outerHTML"
-      hx-disabled-elt="this" {% if sort_by == 'title' %} class="active" hx-disable="true" {% endif %}>Title</a>
+    <a href="?page=1&sort=upload_date&direction=desc" hx-get="?page=1&sort=upload_date&direction=desc"
+      hx-push-url="?page=1&sort=upload_date&direction=desc" hx-target="#book-list" hx-swap="outerHTML" {% if
+      sort_by == 'upload_date' and direction == 'desc' %} class="active" hx-disable="true" {% endif %}>Latest</a>
+    <a href="?page=1&sort=upload_date&direction=asc" hx-get="?page=1&sort=upload_date&direction=asc"
+      hx-push-url="?page=1&sort=upload_date&direction=asc" hx-target="#book-list" hx-swap="outerHTML" {% if
+      sort_by == 'upload_date' and direction == 'asc' %} class="active" hx-disable="true" {% endif %}>Oldest</a>
+    <a href="?page=1&sort=title&direction={% if sort_by == 'title' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+      hx-get="?page=1&sort=title&direction={% if sort_by == 'title' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+      hx-push-url="?page=1&sort=title&direction={% if sort_by == 'title' and direction == 'asc' %}desc{% else %}asc{% endif %}"
+      hx-target="#book-list" hx-swap="outerHTML" {% if sort_by == 'title' %} class="active" {% endif %}>
+      Title
+      {% if sort_by == 'title' %}
+      {% if direction == 'asc' %} ↑ {% else %} ↓ {% endif %}
+      {% endif %}
+    </a>
   </div>
 
   <div class="pagination">
     {% if page_obj.has_previous %}
-    <a hx-get="?page=1&sort={{ sort_by }}" hx-push-url="?page=1&sort={{ sort_by }}" hx-target="#book-list"
+    <a href="?page=1&sort={{ sort_by }}&direction={{ direction }}"
+      hx-get="?page=1&sort={{ sort_by }}&direction={{ direction }}"
+      hx-push-url="?page=1&sort={{ sort_by }}&direction={{ direction }}" hx-target="#book-list"
       hx-swap="outerHTML">First</a>
-    <a hx-get="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}"
-      hx-push-url="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}" hx-target="#book-list"
-      hx-swap="outerHTML">Previous</a>
+    <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-get="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-push-url="?page={{ page_obj.previous_page_number }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-target="#book-list" hx-swap="outerHTML">Previous</a>
     {% else %}
     <span class="disabled">First</span>
     <span class="disabled">Previous</span>
@@ -24,12 +36,14 @@
     <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
 
     {% if page_obj.has_next %}
-    <a hx-get="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}"
-      hx-push-url="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}" hx-target="#book-list"
-      hx-swap="outerHTML">Next</a>
-    <a hx-get="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}"
-      hx-push-url="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}" hx-target="#book-list"
-      hx-swap="outerHTML">Last</a>
+    <a href="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-get="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-push-url="?page={{ page_obj.next_page_number }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-target="#book-list" hx-swap="outerHTML">Next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-get="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-push-url="?page={{ page_obj.paginator.num_pages }}&sort={{ sort_by }}&direction={{ direction }}"
+      hx-target="#book-list" hx-swap="outerHTML">Last</a>
     {% else %}
     <span class="disabled">Next</span>
     <span class="disabled">Last</span>
@@ -51,6 +65,7 @@
           {{ book.authors|join:", " }}
         </p>
         <p><strong>Published on:</strong> {{ book.published_date }}</p>
+        <p><strong>Uploaded on:</strong> {{ book.upload_date }}</p>
         <p><strong>Pages:</strong> {{ book.number_of_pages }}</p>
         <p><strong>File Size:</strong> {{ book.file_size }}</p>
         <p>{{ book.description|truncatewords:20 }}</p>
